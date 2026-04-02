@@ -101,12 +101,12 @@ class AnimationCardEditor extends LitElement {
 
   _onIconSelected(key, e) {
     const val = e.target.value;
-    if (val) this._set(key, val);
+    if (val && val !== this.config[key]) this._set(key, val);
   }
 
   _onActionSelected(key, e) {
     const val = e.target.value;
-    if (val) this._set(key, val);
+    if (val && val !== this.config[key]) this._set(key, val);
   }
 
   render() {
@@ -360,7 +360,7 @@ class AnimationCard extends LitElement {
 
   static getStubConfig() {
     return {
-      entity: "light.example",
+      entity: "",
       name: "",
       icon_on_id:  "bulb_glow_esplosivo",
       icon_off_id: "bulb_off",
@@ -375,7 +375,7 @@ class AnimationCard extends LitElement {
   }
 
   setConfig(config) {
-    if (!config.entity) throw new Error("entity obbligatoria");
+    // if (!config.entity) throw new Error("entity obbligatoria");
     this.config = config;
   }
 
