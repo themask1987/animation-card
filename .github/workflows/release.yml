@@ -16,4 +16,8 @@ jobs:
           files: |
             animation-card.js
             hacs.json
-            icons/*
+            icons/bulb_glow_esplosivo.gif
+            icons/bulb_off.png
+            icons/bulb_pulse_warm.gif
+            icons/fan_on.gif
+            icons/fan_off.gif
