@@ -2,6 +2,4 @@
   "name": "Animation Card",
   "content_in_root": true,
   "filename": "animation-card.js",
-  "zip_release": true,
-  "release_tag": "v1.1.0"
 }
