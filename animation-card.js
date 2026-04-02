@@ -42,7 +42,14 @@ const GLOW_COLORS = [
 // ─────────────────────────────────────────────────────────────────────────────
 class AnimationCardEditor extends LitElement {
   static get properties() {
-    return { hass: {}, config: {} };
+    return { hass: {}, config: {}, _pickerReady: {} };
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    customElements.whenDefined("ha-entity-picker").then(() => {
+      this._pickerReady = true;
+    });
   }
 
   setConfig(config) {
@@ -85,12 +92,21 @@ class AnimationCardEditor extends LitElement {
     return "border:2px solid rgba(255,255,255,0.2);";
   }
 
-  // Opzioni dropdown icone: tutte le icone bundle + Custom
   _iconOptions() {
     return [
       ...ICONS.map(ic => ({ value: ic.id, label: ic.label })),
       { value: "custom", label: "Custom…" },
     ];
+  }
+
+  _onIconSelected(key, e) {
+    const val = e.target.value;
+    if (val) this._set(key, val);
+  }
+
+  _onActionSelected(key, e) {
+    const val = e.target.value;
+    if (val) this._set(key, val);
   }
 
   render() {
@@ -126,12 +142,20 @@ class AnimationCardEditor extends LitElement {
 
         <!-- ENTITÀ -->
         <div class="section-label">Entità</div>
-        <ha-entity-picker
-          .hass=${this.hass}
-          .value=${cfg.entity || ""}
-          @value-changed=${e => this._set("entity", e.detail.value)}
-          allow-custom-entity
-        ></ha-entity-picker>
+        ${this._pickerReady || customElements.get("ha-entity-picker") ? html`
+          <ha-entity-picker
+            .hass=${this.hass}
+            .value=${cfg.entity || ""}
+            @value-changed=${e => this._set("entity", e.detail.value)}
+            allow-custom-entity
+          ></ha-entity-picker>
+        ` : html`
+          <ha-textfield
+            label="Entità (es. light.salotto)"
+            .value=${cfg.entity || ""}
+            @change=${e => this._set("entity", e.target.value)}
+          ></ha-textfield>
+        `}
 
         <ha-textfield
           label="Nome (opzionale)"
@@ -147,7 +171,7 @@ class AnimationCardEditor extends LitElement {
           <ha-select
             label="Icona ON"
             .value=${iconOnId}
-            @selected=${e => this._set("icon_on_id", e.detail.value)}
+            @selected=${e => this._onIconSelected("icon_on_id", e)}
             @closed=${e => e.stopPropagation()}
           >
             ${iconOpts.map(o => html`
@@ -172,7 +196,7 @@ class AnimationCardEditor extends LitElement {
           <ha-select
             label="Icona OFF"
             .value=${iconOffId}
-            @selected=${e => this._set("icon_off_id", e.detail.value)}
+            @selected=${e => this._onIconSelected("icon_off_id", e)}
             @closed=${e => e.stopPropagation()}
           >
             ${iconOpts.map(o => html`
@@ -253,12 +277,12 @@ class AnimationCardEditor extends LitElement {
         <div class="section-label">Azioni</div>
         <div class="action-grid">
           <ha-select label="Tap" .value=${tapAction}
-            @selected=${e => this._set("tap_action", e.detail.value)}
+            @selected=${e => this._onActionSelected("tap_action", e)}
             @closed=${e => e.stopPropagation()}>
             ${ACTIONS.map(a => html`<mwc-list-item value="${a.id}">${a.label}</mwc-list-item>`)}
           </ha-select>
           <ha-select label="Long press" .value=${holdAction}
-            @selected=${e => this._set("hold_action", e.detail.value)}
+            @selected=${e => this._onActionSelected("hold_action", e)}
             @closed=${e => e.stopPropagation()}>
             ${ACTIONS.map(a => html`<mwc-list-item value="${a.id}">${a.label}</mwc-list-item>`)}
           </ha-select>
