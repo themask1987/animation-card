@@ -10,14 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upload release asset
+      - name: Create icons zip
+        run: zip -r icons.zip icons/
+
+      - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
             animation-card.js
             hacs.json
-            icons/bulb_glow_esplosivo.gif
-            icons/bulb_off.png
-            icons/bulb_pulse_warm.gif
-            icons/fan_on.gif
-            icons/fan_off.gif
+            icons.zip
