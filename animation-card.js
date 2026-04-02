@@ -168,16 +168,13 @@ class AnimationCardEditor extends LitElement {
 
         <!-- Icona ON -->
         <div class="icon-block">
-          <ha-select
-            label="Icona ON"
+          <select
             .value=${iconOnId}
-            @selected=${e => this._onIconSelected("icon_on_id", e)}
-            @closed=${e => e.stopPropagation()}
+            @change=${e => this._set("icon_on_id", e.target.value)}
+            style="width:100%;padding:8px;border-radius:6px;background:var(--card-background-color);color:var(--primary-text-color);border:1px solid var(--divider-color);"
           >
-            ${iconOpts.map(o => html`
-              <mwc-list-item value="${o.value}">${o.label}</mwc-list-item>
-            `)}
-          </ha-select>
+            ${iconOpts.map(o => html`<option value="${o.value}" ?selected=${iconOnId === o.value}>${o.label}</option>`)}
+          </select>
           ${iconOnId !== "custom" ? html`
             <img class="icon-preview" src="${ICON_BASE + (ICONS.find(i=>i.id===iconOnId)?.file||'')}"
               onerror="this.style.opacity='0.15'"/>
@@ -193,16 +190,13 @@ class AnimationCardEditor extends LitElement {
 
         <!-- Icona OFF -->
         <div class="icon-block">
-          <ha-select
-            label="Icona OFF"
+          <select
             .value=${iconOffId}
-            @selected=${e => this._onIconSelected("icon_off_id", e)}
-            @closed=${e => e.stopPropagation()}
+            @change=${e => this._set("icon_off_id", e.target.value)}
+            style="width:100%;padding:8px;border-radius:6px;background:var(--card-background-color);color:var(--primary-text-color);border:1px solid var(--divider-color);"
           >
-            ${iconOpts.map(o => html`
-              <mwc-list-item value="${o.value}">${o.label}</mwc-list-item>
-            `)}
-          </ha-select>
+            ${iconOpts.map(o => html`<option value="${o.value}" ?selected=${iconOffId === o.value}>${o.label}</option>`)}
+          </select>
           ${iconOffId !== "custom" ? html`
             <img class="icon-preview" src="${ICON_BASE + (ICONS.find(i=>i.id===iconOffId)?.file||'')}"
               onerror="this.style.opacity='0.15'"/>
@@ -276,16 +270,20 @@ class AnimationCardEditor extends LitElement {
         <!-- AZIONI -->
         <div class="section-label">Azioni</div>
         <div class="action-grid">
-          <ha-select label="Tap" .value=${tapAction}
-            @selected=${e => this._onActionSelected("tap_action", e)}
-            @closed=${e => e.stopPropagation()}>
-            ${ACTIONS.map(a => html`<mwc-list-item value="${a.id}">${a.label}</mwc-list-item>`)}
-          </ha-select>
-          <ha-select label="Long press" .value=${holdAction}
-            @selected=${e => this._onActionSelected("hold_action", e)}
-            @closed=${e => e.stopPropagation()}>
-            ${ACTIONS.map(a => html`<mwc-list-item value="${a.id}">${a.label}</mwc-list-item>`)}
-          </ha-select>
+          <select
+            .value=${tapAction}
+            @change=${e => this._set("tap_action", e.target.value)}
+            style="width:100%;padding:8px;border-radius:6px;background:var(--card-background-color);color:var(--primary-text-color);border:1px solid var(--divider-color);"
+          >
+            ${ACTIONS.map(a => html`<option value="${a.id}" ?selected=${tapAction === a.id}>${a.label}</option>`)}
+          </select>
+          <select
+            .value=${holdAction}
+            @change=${e => this._set("hold_action", e.target.value)}
+            style="width:100%;padding:8px;border-radius:6px;background:var(--card-background-color);color:var(--primary-text-color);border:1px solid var(--divider-color);"
+          >
+            ${ACTIONS.map(a => html`<option value="${a.id}" ?selected=${holdAction === a.id}>${a.label}</option>`)}
+          </select>
         </div>
 
         ${tapAction === "navigate" ? html`
