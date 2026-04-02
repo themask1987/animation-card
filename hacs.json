@@ -1,5 +1,6 @@
 {
   "name": "Animation Card",
   "content_in_root": true,
+  "zip_release": true,
   "filename": "animation-card.js"
 }
