@@ -10,6 +10,8 @@ const ICONS = [
   { id: "bulb_off",            label: "Bulb off",     file: "bulb_off.png"            },
   { id: "fan_on",              label: "Fan on",       file: "fan_on.gif"              },
   { id: "fan_off",             label: "Fan off",      file: "fan_off.png"             },
+  { id: "scaldasalviette_on",  label: "Scaldasalviette on",  file: "scaldasalviette_on.gif"  },
+  { id: "scaldasalviette_off", label: "Scaldasalviette off", file: "scaldasalviette_off.png" },
 ];
 
 const ICON_BASE = "/hacsfiles/animation-card/icons/";
@@ -131,7 +133,6 @@ class AnimationCardEditor extends LitElement {
     return html`
       <div class="editor">
 
-        <!-- PREVIEW -->
         <div class="preview" style="${this._previewGlowStyle()}">
           <img src="${imgSrc}" class="prev-img" onerror="this.style.opacity='0.15'"/>
           <div class="prev-info">
@@ -139,7 +140,6 @@ class AnimationCardEditor extends LitElement {
             <span class="prev-state">${isOn ? "On" : "Off"}</span>
           </div>
         </div>
-        <!-- ENTITÀ -->
         <div class="section-label">Entità</div>
         <div style="position:relative;">
           <ha-textfield
@@ -168,10 +168,8 @@ class AnimationCardEditor extends LitElement {
           @change=${e => this._set("name", e.target.value)}
         ></ha-textfield>
 
-        <!-- ICONE -->
         <div class="section-label">Icone</div>
 
-        <!-- Icona ON -->
         <div class="icon-block">
           <select
             .value=${iconOnId}
@@ -193,7 +191,6 @@ class AnimationCardEditor extends LitElement {
           `}
         </div>
 
-        <!-- Icona OFF -->
         <div class="icon-block">
           <select
             .value=${iconOffId}
@@ -215,7 +212,6 @@ class AnimationCardEditor extends LitElement {
           `}
         </div>
 
-        <!-- GLOW -->
         <div class="section-label">Glow</div>
         <div class="glow-block">
 
@@ -272,7 +268,6 @@ class AnimationCardEditor extends LitElement {
 
         </div>
 
-        <!-- AZIONI -->
         <div class="section-label">Azioni</div>
         <div class="action-grid">
           <select
@@ -378,7 +373,6 @@ class AnimationCard extends LitElement {
   }
 
   setConfig(config) {
-    // if (!config.entity) throw new Error("entity obbligatoria");
     this.config = config;
   }
 
