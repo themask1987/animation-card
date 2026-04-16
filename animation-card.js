@@ -130,6 +130,10 @@ class AnimationCardEditor extends LitElement {
     const imgSrc        = this._resolveImgSrc(isOn ? "on" : "off");
     const iconOpts      = this._iconOptions();
 
+    // Filtro entità intelligente
+    const filterText = (this._entityFilter || "").toLowerCase();
+    const validDomains = ["light","switch","fan","input_boolean","automation","script","media_player","cover","climate","vacuum","lock","alarm_control_panel","humidifier","water_heater"];
+
     return html`
       <div class="editor">
 
@@ -140,25 +144,37 @@ class AnimationCardEditor extends LitElement {
             <span class="prev-state">${isOn ? "On" : "Off"}</span>
           </div>
         </div>
+        
         <div class="section-label">Entità</div>
         <div style="position:relative;">
           <ha-textfield
-            label="Entità (es. light.salotto)"
+            label="Cerca Entità (es. stufa)"
             .value=${cfg.entity || ""}
             @input=${e => { this._set("entity", e.target.value); this._entityFilter = e.target.value; this.requestUpdate(); }}
             @change=${e => this._set("entity", e.target.value)}
           ></ha-textfield>
-          ${this._entityFilter && this._entityFilter.length > 1 ? html`
-            <div style="position:absolute;z-index:999;width:100%;max-height:200px;overflow-y:auto;background:var(--card-background-color);border:1px solid var(--divider-color);border-radius:6px;">
+          
+          ${filterText && filterText.length > 1 ? html`
+            <div style="position:absolute;z-index:999;width:100%;max-height:200px;overflow-y:auto;background:var(--card-background-color);border:1px solid var(--divider-color);border-radius:6px;box-shadow:0 4px 8px rgba(0,0,0,0.2);">
               ${Object.keys(this.hass.states)
-                .filter(e => ["light","switch","fan","input_boolean","automation","script","media_player","cover","climate","vacuum","lock","alarm_control_panel","humidifier","water_heater"].some(d => e.startsWith(d + ".")) && e.includes(this._entityFilter))
-                .slice(0, 10)
-                .map(e => html`
-                  <div style="padding:8px 12px;cursor:pointer;font-size:13px;"
-                    @click=${() => { this._set("entity", e); this._entityFilter = ""; this.requestUpdate(); }}>
-                    ${e}
-                  </div>
-                `)}
+                .filter(e => {
+                  if (!validDomains.some(d => e.startsWith(d + "."))) return false;
+                  const stateObj = this.hass.states[e];
+                  const friendlyName = (stateObj.attributes.friendly_name || "").toLowerCase();
+                  return e.toLowerCase().includes(filterText) || friendlyName.includes(filterText);
+                })
+                .slice(0, 15)
+                .map(e => {
+                  const stateObj = this.hass.states[e];
+                  const fname = stateObj.attributes.friendly_name;
+                  return html`
+                    <div style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--divider-color);"
+                      @click=${() => { this._set("entity", e); this._entityFilter = ""; this.requestUpdate(); }}>
+                      <div style="color:var(--primary-text-color); font-weight: 500;">${fname || e}</div>
+                      ${fname ? html`<div style="font-size:11px;color:var(--secondary-text-color);">${e}</div>` : ""}
+                    </div>
+                  `;
+                })}
             </div>
           ` : ""}
         </div>
@@ -338,6 +354,9 @@ class AnimationCardEditor extends LitElement {
       .slider-val { font-size:12px; color:var(--secondary-text-color); min-width:28px; text-align:right; }
 
       .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+      
+      /* Hover sul menu dropdown delle entità */
+      div[style*="cursor:pointer"]:hover { background: var(--secondary-background-color, rgba(255,255,255,0.05)); }
     `;
   }
 }
