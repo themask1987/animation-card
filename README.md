@@ -54,8 +54,8 @@ Se preferisci usare lo YAML, ecco un esempio completo:
 
 ```yaml
 type: custom:animation-card
-entity: light.salotto
-name: Salotto
+entity: light.dummy
+name: Casa
 icon_on_id: bulb_glow_esplosivo
 icon_off_id: bulb_off
 glow_on_active: true
