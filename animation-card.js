@@ -42,7 +42,7 @@ const GLOW_COLORS = [
 // ─────────────────────────────────────────────────────────────────────────────
 class AnimationCardEditor extends LitElement {
   static get properties() {
-    return { hass: {}, config: {}, _pickerReady: {} };
+    return { hass: {}, config: {}, _entityFilter: {} };
   }
 
   connectedCallback() {
@@ -139,24 +139,29 @@ class AnimationCardEditor extends LitElement {
             <span class="prev-state">${isOn ? "On" : "Off"}</span>
           </div>
         </div>
-
         <!-- ENTITÀ -->
         <div class="section-label">Entità</div>
-        ${this._pickerReady || customElements.get("ha-entity-picker") ? html`
-          <ha-entity-picker
-            .hass=${this.hass}
-            .value=${cfg.entity || ""}
-            @value-changed=${e => this._set("entity", e.detail.value)}
-            allow-custom-entity
-          ></ha-entity-picker>
-        ` : html`
+        <div style="position:relative;">
           <ha-textfield
             label="Entità (es. light.salotto)"
             .value=${cfg.entity || ""}
+            @input=${e => { this._set("entity", e.target.value); this._entityFilter = e.target.value; this.requestUpdate(); }}
             @change=${e => this._set("entity", e.target.value)}
           ></ha-textfield>
-        `}
-
+          ${this._entityFilter && this._entityFilter.length > 1 ? html`
+            <div style="position:absolute;z-index:999;width:100%;max-height:200px;overflow-y:auto;background:var(--card-background-color);border:1px solid var(--divider-color);border-radius:6px;">
+              ${Object.keys(this.hass.states)
+                .filter(e => ["light","switch","fan","input_boolean","automation","script","media_player","cover","climate","vacuum","lock","alarm_control_panel","humidifier","water_heater"].some(d => e.startsWith(d + ".")) && e.includes(this._entityFilter))
+                .slice(0, 10)
+                .map(e => html`
+                  <div style="padding:8px 12px;cursor:pointer;font-size:13px;"
+                    @click=${() => { this._set("entity", e); this._entityFilter = ""; this.requestUpdate(); }}>
+                    ${e}
+                  </div>
+                `)}
+            </div>
+          ` : ""}
+        </div>
         <ha-textfield
           label="Nome (opzionale)"
           .value=${cfg.name || ""}
@@ -472,7 +477,7 @@ class AnimationCard extends LitElement {
   static get styles() {
     return css`
       ha-card {
-        border-radius:20px; border:2px solid rgba(255,255,255,0.3);
+        border-radius:20px; border:3px solid rgba(255, 255, 255, 0.7);
         display:flex; flex-direction:row; align-items:center;
         padding:0 12px; gap:10px; height:56px;
         box-sizing:border-box; cursor:pointer;
