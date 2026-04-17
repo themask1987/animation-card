@@ -7,18 +7,6 @@ Nasce per visualizzare le tue entità utilizzando **icone e GIF animate**, ma si
 
 ---
 
-## ⚡ Dimostrazione Visiva: Animazione + Glow
-
-Guarda come la card prende vita quando il dispositivo si accende, aggiungendo un'animazione chiara e un bagliore reattivo.
-
-| Dispositivo | Stato OFF (Statico) | Stato ON (Animato + Glow) |
-| :---: | :---: | :---: |
-| **Luce (Base)** | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_off.png" width="80" height="80"> | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/.readme/preview_luce.gif" width="80" height="80" style="border:2px solid rgba(255,200,60,0.9);box-shadow:0 0 14px 4px rgba(255,200,60,0.35);border-radius:20px;"> |
-| **Luce (Morbida)** | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_off.png" width="80" height="80"> | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/.readme/preview_luce_2.gif" width="80" height="80" style="border:2px solid rgba(255,120,0,0.9);box-shadow:0 0 14px 4px rgba(255,120,0,0.35);border-radius:20px;"> |
-| **Ventilatore** | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/fan_off.png" width="80" height="80"> | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/.readme/preview_ventola.gif" width="80" height="80" style="border:2px solid rgba(100,255,150,0.9);box-shadow:0 0 14px 4px rgba(100,255,150,0.35);border-radius:20px;"> |
-
----
-
 ## ✨ Novità & Caratteristiche Principali
 
 * 🎨 **Glow Dinamico Intelligente**: Il bagliore ora può seguire il colore RGB/HS reale della tua luce (o usare una ruota colori personalizzata). Puoi regolare l'intensità separatamente per lo stato ON e OFF.
