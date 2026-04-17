@@ -1,67 +1,70 @@
 # 🌟 Animation Card per Home Assistant
 
-Una card Lovelace personalizzata e altamente configurabile per Home Assistant. 
-Permette di visualizzare le tue entità utilizzando **icone e GIF animate** e aggiunge un suggestivo **effetto glow (bagliore) dinamico** ai bordi, completamente configurabile in base allo stato dell'entità (ON/OFF).
+Una card Lovelace personalizzata e di livello avanzato per Home Assistant. 
+Nasce per visualizzare le tue entità utilizzando **icone e GIF animate**, ma si è evoluta in uno strumento potentissimo con **layout multipli**, **menu a tendina per le scorciatoie**, **doppio tocco** e un **glow dinamico** capace di ereditare il colore reale delle tue luci.
 
 [![HACS Custom Repository](https://img.shields.io/badge/HACS-Custom_Repository-orange.svg)](https://hacs.xyz/)
 
-## ✨ Caratteristiche Principali
+---
 
-* 🎨 **Editor Visuale Integrato**: Configura ogni singolo aspetto direttamente dall'interfaccia utente, senza dover toccare il codice YAML.
-* 💡 **Effetto Glow Dinamico**: Scegli colore, velocità dell'animazione e quando attivare il bagliore (solo ON, solo OFF, o entrambi).
-* 🖼️ **Icone Animate Incluse**: Un set di GIF di alta qualità già pronte all'uso.
-* 📂 **Supporto Icone Custom**: Puoi facilmente utilizzare le tue icone personali puntando alla cartella `/local/` di Home Assistant.
-* 👆 **Azioni Personalizzate**: Supporta `tap_action` e `hold_action` (toggle, more-info, navigazione, nessuna azione).
+## ⚡ Dimostrazione Visiva: Animazione + Glow
+
+Guarda come la card prende vita quando il dispositivo si accende, aggiungendo un'animazione chiara e un bagliore reattivo.
+
+| Dispositivo | Stato OFF (Statico) | Stato ON (Animato + Glow) |
+| :---: | :---: | :---: |
+| **Luce (Base)** | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_off.png" width="80" height="80"> | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/.readme/preview_luce.gif" width="80" height="80" style="border:2px solid rgba(255,200,60,0.9);box-shadow:0 0 14px 4px rgba(255,200,60,0.35);border-radius:20px;"> |
+| **Luce (Morbida)** | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_off.png" width="80" height="80"> | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/.readme/preview_luce_2.gif" width="80" height="80" style="border:2px solid rgba(255,120,0,0.9);box-shadow:0 0 14px 4px rgba(255,120,0,0.35);border-radius:20px;"> |
+| **Ventilatore** | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/fan_off.png" width="80" height="80"> | <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/.readme/preview_ventola.gif" width="80" height="80" style="border:2px solid rgba(100,255,150,0.9);box-shadow:0 0 14px 4px rgba(100,255,150,0.35);border-radius:20px;"> |
 
 ---
 
-## 🖼️ Icone Incluse (Bundle)
+## ✨ Novità & Caratteristiche Principali
 
-La card include nativamente queste icone. Puoi selezionarle direttamente dal menu a tendina dell'editor visuale.
-
-| Anteprima | ID Icona | File | Uso Consigliato |
-| :---: | --- | --- | --- |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_glow_esplosivo.gif" width="40" height="40"> | `bulb_glow_esplosivo` | `bulb_glow_esplosivo.gif` | Luce ON (animazione intensa) |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_pulse_warm.gif" width="40" height="40"> | `bulb_pulse_warm` | `bulb_pulse_warm.gif` | Luce ON (pulsazione morbida) |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/bulb_off.png" width="40" height="40"> | `bulb_off` | `bulb_off.png` | Luce OFF (statica) |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/fan_on.gif" width="40" height="40"> | `fan_on` | `fan_on.gif` | Ventilatore ON |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/fan_off.png" width="40" height="40"> | `fan_off` | `fan_off.png` | Ventilatore OFF |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/scaldasalviette_on.gif" width="40" height="40"> | `scaldasalviette_on` | `scaldasalviette_on.gif` | Scaldasalviette ON |
-| <img src="https://raw.githubusercontent.com/themask1987/animation-card/main/icons/scaldasalviette_off.png" width="40" height="40"> | `scaldasalviette_off` | `scaldasalviette_off.png` | Scaldasalviette OFF |
-
-> **Vuoi usare le tue icone?** > Nell'editor visivo seleziona **Custom…** e inserisci il percorso del tuo file (es. `/local/mia_icona_animata.gif`).
+* 🎨 **Glow Dinamico Intelligente**: Il bagliore ora può seguire il colore RGB/HS reale della tua luce (o usare una ruota colori personalizzata). Puoi regolare l'intensità separatamente per lo stato ON e OFF.
+* 📐 **Layout Flessibili (Row & Tile)**: Scegli se visualizzare la card a riga classica (icona + testo) o in modalità **Tile** (icona a piena larghezza con sfumatura e testo sovrapposto). Altezza e allineamento sono completamente configurabili.
+* ⚡ **Azioni Avanzate**: Supporto per **Tap**, **Doppio Tap** (finestra di 250ms) e **Long Press**. Puoi innescare menu, navigazioni o chiamare servizi specifici passando anche payload JSON.
+* 📝 **Sottotesto Modulare**: Dimentica il semplice "Acceso/Spento". Ora puoi concatenare: *Stato, Ultima modifica (es. "5 min fa"), Luminosità, Temperatura, Umidità, o Attributi custom*.
+* 🔘 **Menu Shortcut (⋮)**: Aggiungi fino a 4 azioni rapide accessibili tramite un elegante menu a discesa direttamente dalla card, ognuna con la sua icona colorata.
+* 👁️ **Visibilità Condizionale**: Fai apparire o nascondere la card dinamicamente in base allo stato di un'altra entità (es. mostrala solo se c'è un allarme attivo).
+* 🛠️ **Editor Visuale a Sezioni**: Configura tutto senza toccare una riga di YAML, grazie a un editor pulito e diviso in sezioni collassabili.
 
 ---
 
-## 🛠️ Installazione
-
-L'installazione consigliata è tramite **HACS** (Home Assistant Community Store).
+## 🛠️ Installazione (HACS)
 
 1. Apri **HACS** in Home Assistant.
-2. Clicca sui tre puntini in alto a destra (⋮) e seleziona **Custom repositories** (Repository personalizzati).
+2. Clicca sui tre puntini in alto a destra (⋮) e seleziona **Custom repositories**.
 3. Incolla l'URL di questo repository: `https://github.com/themask1987/animation-card`
-4. Scegli la categoria **Lovelace** (o Dashboard).
-5. Clicca su **Aggiungi** e poi cerca "Animation Card" nella lista per installarla.
-6. Ricarica la pagina del browser o svuota la cache quando richiesto.
+4. Scegli la categoria **Dashboard** e clicca Aggiungi.
+5. Cerca "Animation Card" e installala. Ricarica la cache del browser.
 
 ---
 
-## ⚙️ Configurazione
+## ⚙️ Configurazione YAML (Avanzata)
 
-Puoi configurare la card facilmente tramite l'editor visuale fornito, che include anche un'anteprima in tempo reale del bagliore e dell'animazione. 
-
-Se preferisci usare lo YAML, ecco un esempio completo:
+Sebbene l'editor visuale gestisca tutto, ecco un esempio di configurazione YAML per sfruttare le nuove funzioni (Layout Tile, colore RGB ereditato dall'entità e menu shortcuts):
 
 ```yaml
 type: custom:animation-card
-entity: light.dummy
-name: Casa
+entity: light.salotto
+name: Luce Principale
+layout_mode: tile
+card_height: 90
+subtext_fields:
+  - state
+  - brightness
 icon_on_id: bulb_glow_esplosivo
 icon_off_id: bulb_off
 glow_on_active: true
-glow_on_color: "255,200,60"
-glow_off_active: false
-glow_off_color: "100,180,255"
-glow_speed: 2
+glow_on_color_mode: entity
+glow_on_intensity: 1.2
 tap_action: toggle
-hold_action: more-info
+double_tap_action: more-info
+shortcuts:
+  - label: Imposta 50%
+    action: call-service
+    service_preset: custom
+    service_custom: light.turn_on
+    service_data: '{"brightness_pct": 50}'
+    color: amber
