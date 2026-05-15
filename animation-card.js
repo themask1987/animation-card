@@ -61,14 +61,14 @@ const GLOW_COLORS = [
 
 // ─── SOTTOTESTO ──────────────────────────────────────────────────────────────
 const SUBTEXT_FIELDS = [
-  { id: "state",        label: "Stato (on/off/…)"  },
-  { id: "last_changed", label: "Ultima modifica"    },
-  { id: "brightness",   label: "Luminosità (luci)"  },
-  { id: "temperature",  label: "Temperatura"        },
-  { id: "humidity",     label: "Umidità"            },
-  { id: "friendly_name",label: "Nome descrittivo"   },
-  { id: "custom_attr",  label: "Attributo custom"   },
-  { id: "static_text",  label: "Testo statico"      },
+  { id: "state",         label: "Stato (on/off/…)"  },
+  { id: "last_changed",  label: "Ultima modifica"    },
+  { id: "brightness",    label: "Luminosità (luci)"  },
+  { id: "temperature",   label: "Temperatura"        },
+  { id: "humidity",      label: "Umidità"            },
+  { id: "friendly_name", label: "Nome descrittivo"   },
+  { id: "custom_attr",   label: "Attributo custom"   },
+  { id: "static_text",   label: "Testo statico"      },
 ];
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -112,16 +112,16 @@ function getSubtextValue(entity, fieldId, cfg) {
   if (!entity) return "";
   const a = entity.attributes;
   switch(fieldId) {
-    case "state":        return entity.state;
-    case "last_changed": return formatLastChanged(entity.last_changed);
+    case "state":         return entity.state;
+    case "last_changed":  return formatLastChanged(entity.last_changed);
     case "brightness":
       if (entity.state==="off") return "0%";
       return a.brightness!=null ? `${Math.round(a.brightness/2.55)}%` : "";
-    case "temperature":  return a.temperature!=null ? `${a.temperature}°` : "";
-    case "humidity":     return a.humidity!=null    ? `${a.humidity}%`   : "";
-    case "friendly_name":return a.friendly_name||"";
-    case "custom_attr":  { const k=cfg?.subtext_custom_attr; return k&&a[k]!=null?String(a[k]):""; }
-    case "static_text":  return cfg?.subtext_static_text||"";
+    case "temperature":   return a.temperature!=null ? `${a.temperature}°` : "";
+    case "humidity":      return a.humidity!=null    ? `${a.humidity}%`   : "";
+    case "friendly_name": return a.friendly_name||"";
+    case "custom_attr":   { const k=cfg?.subtext_custom_attr; return k&&a[k]!=null?String(a[k]):""; }
+    case "static_text":   return cfg?.subtext_static_text||"";
     default: return "";
   }
 }
@@ -159,7 +159,7 @@ function callHassAction(hass, trigger, config) {
 // ─────────────────────────────────────────────────────────────────────────────
 class AnimationCardEditor extends LitElement {
   static get properties() {
-    return { hass:{}, config:{}, _entityFilter:{}, _openSections:{} };
+    return { hass:{}, config:{}, _openSections:{} };
   }
 
   constructor() {
@@ -167,7 +167,10 @@ class AnimationCardEditor extends LitElement {
     this._openSections = { entity:true, nome:false, layout:false, glow:false, azioni:false, shortcut:false };
   }
 
-  setConfig(config) { this.config=config; }
+  // HA chiama setConfig ogni volta che la config cambia (anche da YAML)
+  setConfig(config) {
+    this.config = config;
+  }
 
   _fire(config) {
     this.dispatchEvent(new CustomEvent("config-changed",{detail:{config},bubbles:true,composed:true}));
@@ -370,11 +373,7 @@ class AnimationCardEditor extends LitElement {
     const stateFontSize=cfg.state_font_size||12;
     const visibilityEntity=cfg.visibility_entity||"";
     const visibilityState=cfg.visibility_state||"on";
-
     const subtextValue=subtextFields.map(f=>getSubtextValue(entity,f,cfg)).filter(Boolean).join(" · ");
-
-    const filterText=(this._entityFilter||"").toLowerCase();
-    const validDomains=["light","switch","fan","input_boolean","automation","script","media_player","cover","climate","vacuum","lock","alarm_control_panel","humidifier","water_heater"];
 
     const preview=html`
       <div class="preview" style="${this._previewGlowStyle()}">
@@ -385,23 +384,19 @@ class AnimationCardEditor extends LitElement {
         </div>
       </div>`;
 
+    // ── Entità: usa ha-selector nativo, identico all'energy-flow-card ────────
     const sectionEntity=html`
-      <div style="position:relative;">
-        <ha-textfield label="Cerca entità" .value=${cfg.entity||""}
-          @input=${e=>{this._set("entity",e.target.value);this._entityFilter=e.target.value;this.requestUpdate();}}
-          @change=${e=>this._set("entity",e.target.value)}>
-        </ha-textfield>
-        ${filterText&&filterText.length>1?html`
-          <div class="entity-dropdown">
-            ${Object.keys(this.hass.states)
-              .filter(e=>{if(!validDomains.some(d=>e.startsWith(d+".")))return false;const s=this.hass.states[e];const fn=(s.attributes.friendly_name||"").toLowerCase();return e.toLowerCase().includes(filterText)||fn.includes(filterText);})
-              .slice(0,15)
-              .map(e=>{const s=this.hass.states[e];const fn=s.attributes.friendly_name;return html`
-                <div class="entity-option" @click=${()=>{this._set("entity",e);this._entityFilter="";this.requestUpdate();}}>
-                  <div class="entity-option-name">${fn||e}</div>
-                  ${fn?html`<div class="entity-option-id">${e}</div>`:""}
-                </div>`;})}
-          </div>`:""}
+      <div style="margin-bottom:8px;">
+        <ha-selector
+          .hass=${this.hass}
+          .selector=${{ entity: {} }}
+          .label=${"Entità"}
+          .value=${cfg.entity||""}
+          @value-changed=${e=>{
+            if (e.detail && e.detail.value !== undefined)
+              this._set("entity", e.detail.value);
+          }}
+        ></ha-selector>
       </div>
       <div class="icon-block">
         <span class="icon-block-label">Icona ON</span>
@@ -541,13 +536,7 @@ class AnimationCardEditor extends LitElement {
                         border-top:1px solid var(--divider-color); }
       .section-sublabel { font-size:11px; font-weight:500; color:var(--secondary-text-color);
                           text-transform:uppercase; letter-spacing:.06em; margin-top:4px; }
-      .entity-dropdown { position:absolute; z-index:999; width:100%; max-height:200px; overflow-y:auto;
-                         background:var(--card-background-color); border:1px solid var(--divider-color);
-                         border-radius:6px; box-shadow:0 4px 8px rgba(0,0,0,0.2); }
-      .entity-option   { padding:8px 12px; cursor:pointer; font-size:13px; border-bottom:1px solid var(--divider-color); }
-      .entity-option:hover { background:var(--secondary-background-color); }
-      .entity-option-name { color:var(--primary-text-color); font-weight:500; }
-      .entity-option-id   { font-size:11px; color:var(--secondary-text-color); }
+      ha-selector { display:block; width:100%; }
       .icon-block       { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
       .icon-block-label { font-size:12px; color:var(--secondary-text-color); min-width:60px; }
       .icon-preview     { width:36px; height:36px; object-fit:contain; border-radius:6px;
@@ -608,7 +597,7 @@ customElements.define("animation-card-editor", AnimationCardEditor);
 // ─────────────────────────────────────────────────────────────────────────────
 class AnimationCard extends LitElement {
   static get properties() { return { hass:{}, config:{}, _ddOpen:{} }; }
-  constructor() { super(); this._ddOpen=false; }
+  constructor() { super(); this._ddOpen=false; this._ddWasOpen=false; }
 
   static getConfigElement() { return document.createElement("animation-card-editor"); }
 
@@ -675,12 +664,16 @@ class AnimationCard extends LitElement {
 
   _onPointerDown(e) {
     if (e.target.closest(".dd-btn")||e.target.closest(".dropdown")) return;
+    this._ddWasOpen = this._ddOpen;
+    if (this._ddOpen) { this._closeDropdown(); return; }
     this._holdFired=false;
     this._holdTimer=setTimeout(()=>{ this._holdFired=true; callHassAction(this.hass,"hold",this.config); },500);
   }
+
   _onPointerUp(e) {
     if (e.target.closest(".dd-btn")||e.target.closest(".dropdown")) return;
     clearTimeout(this._holdTimer);
+    if (this._ddWasOpen) { this._ddWasOpen=false; return; }
     if (this._holdFired) { this._holdFired=false; return; }
     if (this._tapTimer) {
       clearTimeout(this._tapTimer); this._tapTimer=null;
@@ -689,9 +682,10 @@ class AnimationCard extends LitElement {
       this._tapTimer=setTimeout(()=>{ this._tapTimer=null; callHassAction(this.hass,"tap",this.config); },250);
     }
   }
+
   _onPointerCancel() { clearTimeout(this._holdTimer); clearTimeout(this._tapTimer); this._holdFired=false; this._tapTimer=null; }
 
-  _toggleDropdown(e) { e.stopPropagation(); this._ddOpen=!this._ddOpen; this.requestUpdate(); }
+  _toggleDropdown(e) { e.stopPropagation(); e.preventDefault(); this._ddOpen=!this._ddOpen; this.requestUpdate(); }
   _closeDropdown()   { this._ddOpen=false; this.requestUpdate(); }
 
   _shortcutIconColor(color) {
@@ -757,7 +751,6 @@ class AnimationCard extends LitElement {
     const glowStyle=glowColor?`animation:glow-anim-${uid} ${speed}s ease-in-out infinite;`:"";
     const glowKf=glowColor?html`<style>@keyframes glow-anim-${uid}{0%,100%{box-shadow:${s1};border-color:rgba(${glowColor},0.7);}50%{box-shadow:${s2};border-color:rgba(${glowColor},1);}}</style>`:"";
 
-    const evts={ "@pointerdown":this._onPointerDown, "@pointerup":this._onPointerUp, "@pointercancel":this._onPointerCancel };
     const ddBtn=shortcuts.length?html`<div class="dd-btn" @click=${this._toggleDropdown}>⋮</div>`:"";
 
     if (layoutMode==="tile") {
